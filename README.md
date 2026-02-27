@@ -10,12 +10,9 @@ This project demonstrates hands-on DevOps practices from containerization to Kub
 
 ### 🔹 Docker Compose Architecture (Phase 2)
 Client
-↓
-Flask Backend (Container)
-↓
-PostgreSQL (Container)
-↓
-Persistent Docker Volume
+→ Flask Backend (Container)
+→ PostgreSQL (Container)
+→ Persistent Docker Volume
 - Internal service discovery using Docker networking  
 - Automated DB initialization  
 - Multi-container orchestration  
@@ -24,14 +21,10 @@ Persistent Docker Volume
 
 ### ☸️ Kubernetes Architecture (Phase 3)
 Client
-↓
-Kubernetes Service (NodePort / Port-Forward)
-↓
-Flask Backend Pods (2 replicas)
-↓
-PostgreSQL Pod
-↓
-PersistentVolumeClaim (1Gi storage)
+→ Kubernetes Service (NodePort / Port-Forward)
+→ Flask Backend Pods (2 replicas)
+→ PostgreSQL Pod
+→ PersistentVolumeClaim (1Gi storage)
 - Service-based internal DNS (`DB_HOST=postgres`)
 - Horizontal scaling with replicas
 - Persistent storage using PVC
@@ -83,28 +76,28 @@ Implemented:
 - Rolling update (v1 → v2)
 - Zero-downtime deployment
 
-Apply Kubernetes manifests:
-kubectl apply -f k8s/
+#### Apply Kubernetes manifests:
+- kubectl apply -f k8s/
 
-Port-forward to access locally:
-kubectl port-forward service/flask-backend 5000:5000
+#### Port-forward to access locally:
+- kubectl port-forward service/flask-backend 5000:5000
 
 ## 🔄 Rolling Update Demonstration 
 
 The backend was upgraded from:
-devops-project-backend:latest
+- devops-project-backend:latest
 
 to:
-devops-project-backend:v2
+- devops-project-backend:v2
 
 Kubernetes performed a rolling update:
-	New ReplicaSet created
-	New pods started
-	Old pods terminated gradually
-	No downtime during deployment
+- New ReplicaSet created
+- New pods started
+- Old pods terminated gradually
+- No downtime during deployment
 
-Rollback can be performed using:
-kubectl rollout undo deployment flask-backend
+#### Rollback can be performed using:
+- kubectl rollout undo deployment flask-backend
 
 ## 🚀 API Endpoints 
 | Method | Endpoint | Description       |
@@ -138,13 +131,13 @@ kubectl rollout undo deployment flask-backend
 - Declarative Infrastructure
 
 ## 📂 Project Structure
+
+```
 devops-project/
-│
 ├── backend/
 │   ├── app.py
 │   ├── Dockerfile
 │   └── requirements.txt
-│
 ├── k8s/
 │   ├── postgres-deployment.yaml
 │   ├── postgres-service.yaml
@@ -153,8 +146,8 @@ devops-project/
 │   ├── backend-service.yaml
 │   ├── backend-configmap.yaml
 │   └── backend-secret.yaml
-│
 └── docker-compose.yml
+```
 
 ## 🎯 Future Improvements
 
