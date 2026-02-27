@@ -19,7 +19,7 @@ def get_connection():
 
 @app.route("/health")
 def health():
-    return {"status": "ok"}, 200
+    return {"status": "ok", "version": "v2"}, 200
 
 @app.route("/tasks", methods=["GET"])
 def get_tasks():
