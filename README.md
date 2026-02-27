@@ -9,6 +9,7 @@
 A production-style microservices backend built with **Flask + PostgreSQL**, containerized using Docker and deployed to **Kubernetes (Kind)** with scaling, health probes, secrets, and rolling updates.
 
 This project demonstrates hands-on DevOps practices from containerization, orchestration, scaling, to zero-downtime deployments using Kubernetes.
+
 ---
 
 ## 🏗 Architecture Overview
