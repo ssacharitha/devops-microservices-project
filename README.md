@@ -6,10 +6,9 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-336791?logo=postgresql)
 ![GitHub Actions](https://img.shields.io/badge/CI/CD-GitHub%20Actions-2088FF?logo=github-actions&logoColor=white)
 
-> 🚀 A hands-on DevOps project demonstrating containerization, orchestration, scaling, and zero-downtime deployments using Kubernetes.
-
 A production-style microservices backend built with **Flask + PostgreSQL**, containerized using Docker and deployed to **Kubernetes (Kind)** with scaling, health probes, secrets, and rolling updates.
 
+This project demonstrates hands-on DevOps practices from containerization, orchestration, scaling, to zero-downtime deployments using Kubernetes.
 ---
 
 ## 🏗 Architecture Overview
@@ -41,16 +40,10 @@ flowchart TD
 ---
 
 ### 🔹 Docker Compose Architecture (Phase 2)
-````markdown
-```text
 Client
-   ↓
-Flask Backend (Container)
-   ↓
-PostgreSQL (Container)
-   ↓
-Persistent Docker Volume
-```
+→ Flask Backend (Container)
+→ PostgreSQL (Container)
+→ Persistent Docker Volume
 - Internal service discovery using Docker networking  
 - Automated DB initialization  
 - Multi-container orchestration  
@@ -59,18 +52,11 @@ Persistent Docker Volume
 
 
 ### ☸️ Kubernetes Architecture (Phase 3)
-````markdown
-```text
 Client
-   ↓
-Kubernetes Service (NodePort / Port-Forward)
-   ↓
-Flask Backend Pods (2 replicas)
-   ↓
-PostgreSQL Pod
-   ↓
-PersistentVolumeClaim (1Gi storage)
-```
+→ Kubernetes Service (NodePort / Port-Forward)
+→ Flask Backend Pods (2 replicas)
+→ PostgreSQL Pod
+→ PersistentVolumeClaim (1Gi storage)
 - Service-based internal DNS (`DB_HOST=postgres`)
 - Horizontal scaling with replicas
 - Persistent storage using PVC
