@@ -15,27 +15,33 @@ This project demonstrates hands-on DevOps practices from containerization, orche
 ## 🏗 Architecture Overview
 
 ### 📊 Kubernetes Architecture Diagram
+## 📊 Kubernetes Production Architecture Diagram
 
 ```mermaid
 flowchart TD
+
+    %% External Client
     Client["Client (Browser / API User)"] --> Service["Kubernetes Service (NodePort)"]
 
+    %% Backend Application Layer
     Service --> Pod1["Flask Pod 1"]
     Service --> Pod2["Flask Pod 2"]
 
-    Pod1 --> DB["PostgreSQL Pod"]
-    Pod2 --> DB
+    %% Deployment Hierarchy
+    Deployment["Flask Deployment (replicas: 2)"] --> RS["ReplicaSet"]
+    RS --> Pod1
+    RS --> Pod2
 
-    DB --> PVC["PersistentVolumeClaim (1Gi)"]
+    %% Database Layer
+    Pod1 --> DBPod["PostgreSQL Pod"]
+    Pod2 --> DBPod
 
-    Config["ConfigMap"] --> Pod1
-    Config --> Pod2
+    DBDeployment["PostgreSQL Deployment"] --> DBPod
+    DBPod --> PVC["PersistentVolumeClaim (1Gi Storage)"]
 
-    Secret["Secret"] --> Pod1
-    Secret --> Pod2
-
-    Probe["Liveness & Readiness Probes"] --> Pod1
-    Probe --> Pod2
+    %% Configuration & Secrets
+    Config["ConfigMap"] --> Deployment
+    Secret["Secret"] --> Deployment
 ```
 
 ---
