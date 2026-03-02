@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: flask-backend
-        image: ssacharitha/devops-project-backend:v1
-        imagePullPolicy: IfNotPresent
+        image: ssacharitha/devops-project-backend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
 
