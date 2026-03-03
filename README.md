@@ -1,4 +1,4 @@
-	# 🚀 DevOps Microservices Project
+# 🚀 DevOps Microservices Project
 
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue?logo=docker)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-Orchestrated-326CE5?logo=kubernetes&logoColor=white)
@@ -46,7 +46,7 @@ flowchart TD
 ```
 
 ---
-##📌 Project Phases
+## 📌 Project Phases
 ---
 
 ## 🧩 Phase 1 – Flask + PostgreSQL Backend
@@ -118,11 +118,15 @@ kubectl port-forward service/flask-backend 5000:5000
 
 ## 🔄 Rolling Update Demonstration 
 
-The backend was upgraded from:
-- devops-project-backend:latest
+#### The backend was upgraded from:
+```
+devops-project-backend:latest
+```
 
-to:
-- devops-project-backend:v2
+#### to:
+```
+devops-project-backend:v2
+```
 
 Kubernetes performed a rolling update:
 - New ReplicaSet created
