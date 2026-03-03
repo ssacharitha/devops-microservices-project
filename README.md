@@ -1,4 +1,4 @@
-# 🚀 DevOps Microservices Project
+	# 🚀 DevOps Microservices Project
 
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue?logo=docker)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-Orchestrated-326CE5?logo=kubernetes&logoColor=white)
@@ -6,9 +6,9 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-336791?logo=postgresql)
 ![GitHub Actions](https://img.shields.io/badge/CI/CD-GitHub%20Actions-2088FF?logo=github-actions&logoColor=white)
 
-A production-style microservices backend built with **Flask + PostgreSQL**, containerized using Docker and deployed to **Kubernetes (Kind)** with scaling, health probes, secrets, and rolling updates.
+A production-style microservices backend built with Flask + PostgreSQL, containerized using Docker and deployed to Kubernetes (Kind) with Ingress, auto-scaling, health probes, secrets management, and CI/CD automation.
 
-This project demonstrates hands-on DevOps practices from containerization, orchestration, scaling, to zero-downtime deployments using Kubernetes.
+This project demonstrates hands-on DevOps practices from containerization to orchestration, scaling, and zero-downtime deployments.
 
 ---
 
@@ -20,65 +20,50 @@ This project demonstrates hands-on DevOps practices from containerization, orche
 ```mermaid
 flowchart TD
 
-    %% External Client
-    Client["Client (Browser / API User)"] --> Service["Kubernetes Service (NodePort)"]
+    Client["Client (Browser / API User)"]
+    Client --> Ingress["NGINX Ingress Controller (Layer 7)"]
 
-    %% Backend Application Layer
+    Ingress --> Service["ClusterIP Service (flask-backend)"]
+
     Service --> Pod1["Flask Pod 1"]
     Service --> Pod2["Flask Pod 2"]
 
-    %% Deployment Hierarchy
-    Deployment["Flask Deployment (replicas: 2)"] --> RS["ReplicaSet"]
+    Deployment["Flask Deployment"] --> RS["ReplicaSet"]
     RS --> Pod1
     RS --> Pod2
 
-    %% Database Layer
+    HPA["Horizontal Pod Autoscaler"] --> Deployment
+    Metrics["Metrics Server"] --> HPA
+
     Pod1 --> DBPod["PostgreSQL Pod"]
     Pod2 --> DBPod
 
     DBDeployment["PostgreSQL Deployment"] --> DBPod
     DBPod --> PVC["PersistentVolumeClaim (1Gi Storage)"]
 
-    %% Configuration & Secrets
     Config["ConfigMap"] --> Deployment
     Secret["Secret"] --> Deployment
 ```
 
 ---
-
-### 🔹 Docker Compose Architecture (Phase 2)
-Client
-→ Flask Backend (Container)
-→ PostgreSQL (Container)
-→ Persistent Docker Volume
-- Internal service discovery using Docker networking  
-- Automated DB initialization  
-- Multi-container orchestration  
-
+##📌 Project Phases
 ---
 
-
-### ☸️ Kubernetes Architecture (Phase 3)
-Client
-→ Kubernetes Service (NodePort / Port-Forward)
-→ Flask Backend Pods (2 replicas)
-→ PostgreSQL Pod
-→ PersistentVolumeClaim (1Gi storage)
-- Service-based internal DNS (`DB_HOST=postgres`)
-- Horizontal scaling with replicas
-- Persistent storage using PVC
-- ConfigMap for configuration
-- Secret for credentials
-- Rolling updates with zero downtime
-
----
-
-## 📌 Phase 1 – Flask + PostgreSQL Backend
+## 🧩 Phase 1 – Flask + PostgreSQL Backend
 
 - REST API built with Flask  
 - PostgreSQL integration using psycopg2  
 - Environment-based configuration  
 - Health check endpoint (`/health`)  
+- Task creation and retrieval endpoints (/tasks)
+
+#### API Endpoints
+
+| Method | Endpoint | Description       |
+| ------ | -------- | ----------------- |
+| GET    | /health  | Health check      |
+| GET    | /tasks   | Fetch all tasks   |
+| POST   | /tasks   | Create a new task |
 
 ---
 
@@ -87,39 +72,49 @@ Client
 - Backend containerized using Docker  
 - PostgreSQL containerized  
 - Multi-container orchestration using Docker Compose  
-- Persistent volume for DB storage  
+- Persistent Docker volume for database storage 
 - Automated database initialization  
 - Service-based container networking  
 
 #### ▶️ Run Locally
+```
 docker compose up --build
+```
 
 #### Access:
+
 - http://localhost:5000/health
 - http://localhost:5000/tasks
 
+
 ## ☸️ Phase 3 – Kubernetes Deployment (Kind)
 
-Deployed to a local Kubernetes cluster using Kind.
+Deployed to a local Kubernetes cluster using Kind with production-style configuration.
 
-Implemented:
-- PostgreSQL Deployment
-- PersistentVolumeClaim (1Gi storage)
-- ClusterIP Service for internal DB communication
+Implemented Features:
+
+- PostgreSQL Deployment with PersistentVolumeClaim (1Gi storage)
 - Flask Backend Deployment
-- NodePort Service for external access
+- ClusterIP Service for internal DB communication
+- NGINX Ingress Controller (Layer 7 routing)
+- Host-based routing (devops.local)
 - Liveness & Readiness Probes
-- ConfigMap for environment configuration
-- Secret for database credentials
-- Horizontal scaling (2 replicas)
-- Rolling update (v1 → v2)
-- Zero-downtime deployment
+- ConfigMap for configuration management
+- Secret for secure credential storage
+- Horizontal Pod Autoscaler (HPA)
+- Metrics Server for resource monitoring
+- Rolling updates with zero downtime
+- Versioned deployments using commit SHA tags
 
 #### Apply Kubernetes manifests:
-- kubectl apply -f k8s/
+```
+kubectl apply -f k8s/
+```
 
 #### Port-forward to access locally:
-- kubectl port-forward service/flask-backend 5000:5000
+```
+kubectl port-forward service/flask-backend 5000:5000
+```
 
 ## 🔄 Rolling Update Demonstration 
 
@@ -136,14 +131,47 @@ Kubernetes performed a rolling update:
 - No downtime during deployment
 
 #### Rollback can be performed using:
-- kubectl rollout undo deployment flask-backend
+```
+kubectl rollout undo deployment flask-backend
 
-## 🚀 API Endpoints 
-| Method | Endpoint | Description       |
-| ------ | -------- | ----------------- |
-| GET    | /health  | Health check      |
-| GET    | /tasks   | Fetch all tasks   |
-| POST   | /tasks   | Create a new task |
+```
+
+## 🔄 Phase 4 – CI/CD with GitHub Actions
+
+Implemented a Continuous Integration pipeline using GitHub Actions.
+
+CI Pipeline Workflow:
+
+- Triggered on push to main
+- Builds Docker image automatically
+- Tags image with:
+	- latest
+	- Commit SHA (immutable versioning)
+- Pushes images to Docker Hub
+
+Example image tags:
+```
+ssacharitha/devops-project-backend:latest
+ssacharitha/devops-project-backend:<commit-sha>
+```
+This enables: 
+- Traceable deployments
+- Safe rollbacks
+- Immutable infrastructure practices
+
+## 📈 Phase 5 – Auto Scaling with HPA
+
+- Installed Metrics Server in Kubernetes
+- Configured CPU resource requests & limits
+- Implemented Horizontal Pod Autoscaler (HPA)
+- Automatic scaling between 2–6 replicas
+- Target CPU utilization: 50%
+
+Observed behavior:
+
+- Pods scale up automatically under load
+- Scale down when traffic decreases
+- No downtime during scaling events
 
 ## 🛠 Tech Stack 
 
@@ -152,22 +180,26 @@ Kubernetes performed a rolling update:
 - Docker
 - Docker Compose
 - Kubernetes (Kind)
-- YAML (Infrastructure as Code)
+- NGINX Ingress Controller
+- GitHub Actions (CI/CD)
+- YAML (Declarative Infrastructure)
 - Git & GitHub
 
 ## ♾️ DevOps Concepts Demonstrated 
 
 - Containerization with Docker
-- Multi-container orchestration
+- Multi-container orchestration (Docker Compose)
 - Kubernetes Deployments & Services
+- Ingress (Layer 7 HTTP routing)
 - PersistentVolumeClaims (stateful workloads)
-- Liveness & Readiness Probes
 - ConfigMap & Secret management
-- Horizontal scaling
-- Rolling updates
-- ReplicaSets
-- Service-based load balancing
-- Declarative Infrastructure
+- Liveness & Readiness Probes
+- Horizontal Pod Autoscaling (HPA)
+- Metrics Server integration
+- Rolling updates & zero-downtime deployments
+- GitHub Actions CI/CD automation
+- Commit-based image versioning
+- Declarative Infrastructure (Infrastructure as Code using YAML)
 
 ## 📂 Project Structure
 
@@ -184,25 +216,30 @@ devops-project/
 │   ├── backend-deployment.yaml
 │   ├── backend-service.yaml
 │   ├── backend-configmap.yaml
-│   └── backend-secret.yaml
+│   ├── backend-secret.yaml
+│   ├── backend-ingress.yaml
+│   └── backend-hpa.yaml
+├── .github/
+│   └── workflows/
+│       └── docker-ci.yml
 └── docker-compose.yml
 ```
 
 ## 🎯 Future Improvements
 
-- CI/CD pipeline using GitHub Actions
-- Deploy to AWS EKS
-- Infrastructure as Code using Terraform
-- Add Ingress Controller
-- Implement HPA (Horizontal Pod Autoscaler)
+- Deploying to AWS EKS (Managed Kubernetes)
+- Infrastructure provisioning using Terraform
 - Monitoring with Prometheus & Grafana
+- Adding centralized logging
+Implementing full CD (auto deployment to cluster)
 
 ## 🔥 What This Project Shows
 
-This project demonstrates practical DevOps skills:
-- Building containerized applications
-- Deploying to Kubernetes
-- Managing configuration securely
-- Scaling applications
-- Performing zero-downtime deployments
-- Debugging real infrastructure issues
+This project demonstrates practical DevOps capabilities:
+- Designing containerized microservices
+- Deploying to Kubernetes with production patterns
+- Managing secrets and configuration securely
+- Implementing CI/CD automation
+- Enabling zero-downtime rolling deployments
+- Implementing dynamic auto-scaling
+- Debugging and resolving real infrastructure issues
